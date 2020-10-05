@@ -1,0 +1,1 @@
+docker build -t follesoe/jottacloud-docker:latest .

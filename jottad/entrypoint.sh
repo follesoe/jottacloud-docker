@@ -3,24 +3,25 @@
 # set timezone
 rm /etc/localtime
 ln -s $LOCALTIME /etc/localtime
-    
+
 # make sure we are running the latest version of jotta-cli
 apt-get update
 apt-get install jotta-cli
-    
+
 # set the jottad user and group id
 usermod -u $PUID jottad
 usermod --gid $PGID jottad
 usermod -a -G jottad jottad
-    
+
 # start the service
 /etc/init.d/jottad start
-    
+
 # wait for service to fully start
 sleep 5
-     
+
+jotta-cli status
+
 if [[ "$(jotta-cli status)" =~ ERROR.* ]]; then 
-   
   echo "First time login"
   
   # Login user
@@ -33,24 +34,21 @@ if [[ "$(jotta-cli status)" =~ ERROR.* ]]; then
   expect eof
   "
 
-# add backup volume
+  # add backup volume
   jotta-cli add /backup
-
 else
-
   echo "User is logged in" 
-
 fi
 
-  # load ignore file
-  if [ -f /config/ignorefile ]; then
-    echo "loading ignore file"
-    jotta-cli ignores set /config/ignorefile
-  fi
-  
-  # set scan interval
-  echo "Setting scan interval"
-  jotta-cli config set scaninterval $JOTTA_SCANINTERVAL
+# load ignore file
+if [ -f /config/ignorefile ]; then
+  echo "loading ignore file"
+  jotta-cli ignores set /config/ignorefile
+fi
+
+# set scan interval
+echo "Setting scan interval"
+jotta-cli config set scaninterval $JOTTA_SCANINTERVAL
 
 # put tail in the foreground, so docker does not quit
 tail -f /dev/null

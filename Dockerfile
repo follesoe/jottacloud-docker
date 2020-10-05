@@ -19,7 +19,7 @@ VOLUME ["/backup"]
 ADD /jottad/ /usr/local/jottad
 
 # add execute permission
-RUN chmod +x /usr/local/jottad/* /etc/init.d/jottad
+RUN chmod +x /usr/local/jottad/* /usr/bin/jottad
 
 # Open port
 EXPOSE 14443
