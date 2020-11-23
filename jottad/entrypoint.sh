@@ -19,9 +19,10 @@ usermod -a -G jottad jottad
 # wait for service to fully start
 sleep 5
 
+echo "Checking status"
 jotta-cli status
 
-if [[ "$(jotta-cli status)" =~ ERROR.* ]]; then 
+if [[ "$(jotta-cli status 2>&1)" =~ ERROR.* ]]; then 
   echo "First time login"
   
   # Login user
@@ -30,6 +31,7 @@ if [[ "$(jotta-cli status)" =~ ERROR.* ]]; then
   spawn jotta-cli login
   expect \"accept license (yes/no): \" {send \"yes\n\"}
   expect \"Personal login token: \" {send \"$JOTTA_TOKEN\n\"}
+  expect \"re-use this device? (yes/no): \" {send \"yes\n\"}
   expect \"Devicename*: \" {send \"$JOTTA_DEVICE\n\"}
   expect eof
   "
@@ -42,7 +44,7 @@ fi
 
 # load ignore file
 if [ -f /config/ignorefile ]; then
-  echo "loading ignore file"
+  echo "Loading ignore file"
   jotta-cli ignores set /config/ignorefile
 fi
 
